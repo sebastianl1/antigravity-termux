@@ -1,5 +1,13 @@
 # Antigravity CLI - Termux
 
+<p align="center">
+  <img src="imagenes/Antigravity.jpg" alt="Antigravity CLI" width="600">
+</p>
+
+<p align="center">
+  <img src="imagenes/Antigravity2.jpg" alt="Antigravity CLI" width="600">
+</p>
+
 Instalacion nativa de **Antigravity CLI (agy)** en Termux para Android ARM64.
 Sin proot, sin VMs, sin Cloud Shell.
 
@@ -24,7 +32,7 @@ parcheado para funcionar correctamente en Termux.
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tuusuario/antigravity-termux.git
+git https://github.com/sebastianl1/antigravity_termux.git
 cd antigravity-termux
 
 # Ejecutar el instalador
@@ -160,10 +168,18 @@ rm -rf ~/backups/agy.backup.*
 
 ```
 antigravity-termux/
-├── install.sh       # Script de instalacion
-├── README.md        # Este archivo
-└── LICENSE          # Licencia MIT
+├── imagenes/
+│   └── Antigravity.jpg   # Banner del proyecto
+├── install.sh            # Script de instalacion
+├── README.md             # Este archivo
+└── LICENSE               # Licencia MIT
 ```
+
+---
+
+## Autor
+
+**Sebastian Laguna** — Creador y mantenedor del proyecto
 
 ---
 
@@ -173,7 +189,6 @@ antigravity-termux/
   — Fork comunitario con parches de compatibilidad para Termux (VA39, DNS, TLS)
 - **[NoeFabris/opencode-antigravity-auth](https://github.com/NoeFabris/opencode-antigravity-auth)**
   — Plugin de integracion con opencode
-- **Script creado por Sebastian Laguna**
 
 ---
 
