@@ -23,7 +23,7 @@ set -eEuo pipefail
 
 # ── Configuracion ────────────────────────────────────────────────────────────
 
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="1.2.0"
 SCRIPT_AUTHOR="Sebastian Laguna"
 SCRIPT_REPO="https://github.com/sebastianl1/antigravity_termux"
 
