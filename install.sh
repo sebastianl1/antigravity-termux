@@ -37,6 +37,7 @@ TMP_DIR="$PREFIX/tmp/agy-install"
 EXTRACT_DIR="$TMP_DIR/extract"
 TARBALL="$TMP_DIR/antigravity-termux-standalone.tar.gz"
 LOG_FILE="$TMP_DIR/install.log"
+INSTALL_FAILED=false
 
 # ── Colores (profesionales, sin llamativos) ─────────────────────────────────
 
@@ -101,14 +102,13 @@ check_item() {
     fi
 }
 
-separator() {
-    echo -e "  ${DIM}$(make_line)${RESET}"
-}
-
 # ── Funciones de utilidad ───────────────────────────────────────────────────
 
 cleanup() {
-    rm -rf "$EXTRACT_DIR" 2>/dev/null || true
+    if [ "$INSTALL_FAILED" = "true" ] && [ -d "$BACKUP_DIR" ]; then
+        restore_backup
+    fi
+    rm -rf "$TMP_DIR" 2>/dev/null || true
 }
 
 trap cleanup EXIT INT TERM
@@ -151,24 +151,24 @@ run_hidden() {
 
     printf "  ⬡ ${BOLD}%-34s${RESET}" "$desc"
 
-    "$@" > "$LOG_FILE" 2>&1 &
+    echo "--- [$desc] $(date) ---" >> "$LOG_FILE"
+    "$@" >> "$LOG_FILE" 2>&1 &
     local pid=$!
     local spin='-\|/'
     local i=0
 
-    while kill -0 $pid 2>/dev/null; do
-        printf "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
-        printf "  ${WHITE}${BOLD}⬡${RESET} ${BOLD}%-34s${RESET} ${DIM}${spin:$i:1}${RESET}" "$desc"
+    while kill -0 "$pid" 2>/dev/null; do
+        printf "\r  ${WHITE}${BOLD}⬡${RESET} ${BOLD}%-34s${RESET} ${DIM}%s${RESET}" "$desc" "${spin:$i:1}"
         i=$(( (i + 1) % 4 ))
         sleep 0.1
     done
 
-    wait $pid
+    wait "$pid"
     local exit_code=$?
 
     printf "\r"
 
-    if [ $exit_code -eq 0 ]; then
+    if [ "$exit_code" -eq 0 ]; then
         printf "  ${GREEN}✔${RESET} ${BOLD}%-34s${RESET} ${GREEN}hecho${RESET}\n" "$desc"
     else
         printf "  ${RED}✘${RESET} ${BOLD}%-34s${RESET} ${RED}fallo${RESET}\n" "$desc"
@@ -250,33 +250,39 @@ check_environment() {
 
     echo ""
 
-    if ! $env_ok; then
-        print_error "Este instalador solo funciona en Termux en dispositivos Android ARM64."
+    if [ "$env_ok" != "true" ] || [ "$arch_ok" != "true" ]; then
+        print_error "Este instalador solo funciona en Termux ARM64 (aarch64)."
     fi
 
     local needs_install=false
-    if ! $glibc_ok || ! $cert_ok || ! $dns_ok; then
+    if [ "$glibc_ok" != "true" ] || [ "$cert_ok" != "true" ] || [ "$dns_ok" != "true" ]; then
         if ask_yes_no "¿Instalar dependencias faltantes?" "S"; then
             needs_install=true
         fi
     fi
 
-    if $needs_install; then
-        if ! $glibc_ok; then
-            run_hidden "Instalar glibc" pkg install -y glibc-repo glibc-runner glibc
+    if [ "$needs_install" = "true" ]; then
+        if [ "$glibc_ok" != "true" ]; then
+            run_hidden "Actualizar repositorios" pkg update -y
+            run_hidden "Instalar glibc-repo" pkg install -y glibc-repo
+            run_hidden "Actualizar repositorios" pkg update -y
+            run_hidden "Instalar glibc" pkg install -y glibc-runner glibc
         fi
-        if ! $cert_ok; then
+        if [ "$cert_ok" != "true" ]; then
             run_hidden "Instalar ca-certificates" pkg install -y ca-certificates
         fi
-        if ! $dns_ok; then
+        if [ "$dns_ok" != "true" ]; then
             run_hidden "Instalar resolv-conf" pkg install -y resolv-conf
         fi
-    elif ! $glibc_ok || ! $cert_ok || ! $dns_ok; then
+    elif [ "$glibc_ok" != "true" ] || [ "$cert_ok" != "true" ] || [ "$dns_ok" != "true" ]; then
         print_error "Dependencias faltantes. Instalalas manualmente con: pkg install glibc-repo glibc-runner ca-certificates resolv-conf"
     fi
 }
 
 check_dependencies() {
+    if ! command -v curl &>/dev/null || ! command -v tar &>/dev/null; then
+        run_hidden "Actualizar repositorios" pkg update -y
+    fi
     if ! command -v curl &>/dev/null; then
         run_hidden "Instalar curl" pkg install -y curl
     fi
@@ -286,29 +292,21 @@ check_dependencies() {
 }
 
 check_existing() {
+    local current_version="$1"
+
     section_header "Estado actual"
 
-    local current_version
-    current_version=$(detect_installed_version)
+    check_item "Antigravity CLI" "ok" "$current_version"
+    check_item "Origen" "ok" "$AGY_BIN_DIR/agy"
 
-    if [ -n "$current_version" ]; then
-        check_item "Antigravity CLI" "ok" "$current_version"
-        check_item "Origen" "ok" "$AGY_BIN_DIR/agy"
-
-        if ask_yes_no "¿Reinstalar agy?" "N"; then
-            return 0
-        else
-            if ask_yes_no "¿Configurar solo opencode?" "S"; then
-                setup_opencode_flow
-                print_summary
-            fi
-            echo ""
-            print_info "Instalacion omitida."
-            exit 0
+    if ! ask_yes_no "¿Reinstalar agy?" "N"; then
+        if ask_yes_no "¿Configurar solo opencode?" "S"; then
+            setup_opencode_flow
+            print_summary
         fi
-    else
-        check_item "Antigravity CLI" "skip" "no instalado"
-        return 0
+        echo ""
+        print_info "Instalacion omitida."
+        return 1
     fi
 }
 
@@ -333,10 +331,30 @@ backup_existing() {
         has_backup=true
     fi
 
-    if $has_backup; then
+    if [ "$has_backup" = "true" ]; then
         check_item "Respaldo creado" "ok" "$BACKUP_DIR/"
     else
         check_item "Sin instalacion previa" "ok" ""
+    fi
+}
+
+restore_backup() {
+    local restored=false
+    local f
+    for f in "$BACKUP_DIR"/agy.backup.*; do
+        [ -f "$f" ] || continue
+        cp "$f" "$AGY_BIN_DIR/agy" 2>/dev/null && restored=true
+    done
+    for f in "$BACKUP_DIR"/agy.va39.backup.*; do
+        [ -f "$f" ] || continue
+        cp "$f" "$AGY_BIN_DIR/agy.va39" 2>/dev/null && restored=true
+    done
+    if [ "$restored" = "true" ]; then
+        {
+            echo "--- [restore_backup] $(date) ---"
+            echo "Binarios restaurados desde $BACKUP_DIR"
+        } >> "$LOG_FILE"
+        echo -e "\n  ${YELLOW}⬡${RESET} Binarios anteriores restaurados desde backup." >&2
     fi
 }
 
@@ -347,7 +365,9 @@ install_agy() {
     rm -rf "$EXTRACT_DIR"
     mkdir -p "$EXTRACT_DIR"
 
-    run_hidden "Descargar binarios" curl -fsSL "$AGY_URL" -o "$TARBALL"
+    run_hidden "Descargar binarios" curl -fsSL --proto =https "$AGY_URL" -o "$TARBALL"
+
+    run_hidden "Verificar integridad" gzip -t "$TARBALL"
 
     run_hidden "Extraer archivos" tar -xz -C "$EXTRACT_DIR" -f "$TARBALL" agy agy.va39
 
@@ -357,56 +377,6 @@ install_agy() {
 
     run_hidden "Instalar bootstrapper" install -m 0755 "$EXTRACT_DIR/agy" "$AGY_BIN_DIR/agy"
     run_hidden "Instalar motor agy.va39" install -m 0755 "$EXTRACT_DIR/agy.va39" "$AGY_BIN_DIR/agy.va39"
-}
-
-configure_shell_path() {
-    local path_line='export PATH="$HOME/.local/bin:$PATH"'
-    local fish_line='fish_add_path $HOME/.local/bin'
-    local shell_name=""
-    local config_file=""
-    local already=false
-
-    if [ -f "$HOME/.config/fish/config.fish" ]; then
-        shell_name="fish"
-        config_file="$HOME/.config/fish/config.fish"
-        if grep -q 'fish_add_path $HOME/.local/bin' "$config_file" 2>/dev/null; then
-            already=true
-        else
-            echo "$fish_line" >> "$config_file"
-        fi
-    elif [ -f "$HOME/.zshrc" ]; then
-        shell_name="zsh"
-        config_file="$HOME/.zshrc"
-        if grep -q '\.local/bin' "$config_file" 2>/dev/null; then
-            already=true
-        else
-            echo "" >> "$config_file"
-            echo "# Agregado por antigravity-termux" >> "$config_file"
-            echo "$path_line" >> "$config_file"
-        fi
-    elif [ -f "$HOME/.bashrc" ]; then
-        shell_name="bash"
-        config_file="$HOME/.bashrc"
-        if grep -q '\.local/bin' "$config_file" 2>/dev/null; then
-            already=true
-        else
-            echo "" >> "$config_file"
-            echo "# Agregado por antigravity-termux" >> "$config_file"
-            echo "$path_line" >> "$config_file"
-        fi
-    fi
-
-    if $already; then
-        check_item "PATH en $shell_name" "ok" "ya configurado"
-    elif [ -n "$shell_name" ]; then
-        check_item "PATH en $shell_name" "ok" "${config_file}"
-    else
-        check_item "PATH en shell" "skip" "no se detecto config"
-        echo ""
-        echo -e "  ${DIM}Agrega manualmente a tu archivo de shell:${RESET}"
-        echo -e "  ${DIM}  export PATH=\"\$HOME/.local/bin:\$PATH\"${RESET}"
-        echo ""
-    fi
 }
 
 verify_installation() {
@@ -434,44 +404,30 @@ setup_opencode_flow() {
 
     mkdir -p "$OPCODE_CONFIG_DIR"
 
+    local opencode_config='{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["opencode-antigravity-auth@latest"],
+  "provider": {
+    "google": {}
+  },
+  "model": "google/antigravity-gemini-3-pro"
+}'
+
     if [ -f "$OPCODE_CONFIG_FILE" ]; then
         if grep -q "opencode-antigravity-auth" "$OPCODE_CONFIG_FILE" 2>/dev/null; then
             check_item "Plugin antigravity-auth" "ok" "ya configurado"
-        else
-            local bk
-            bk="$OPCODE_CONFIG_FILE.backup.$(date +%Y%m%d-%H%M%S)"
-            cp "$OPCODE_CONFIG_FILE" "$bk"
-            check_item "Respaldo opencode" "ok" "${bk}"
-
-            cat > "$OPCODE_CONFIG_FILE" << 'EOF'
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["opencode-antigravity-auth@latest"],
-  "provider": {
-    "google": {}
-  },
-  "model": "google/antigravity-gemini-3-pro"
-}
-EOF
-            check_item "Configurar plugin" "ok" ""
+            return
         fi
-    else
-        cat > "$OPCODE_CONFIG_FILE" << 'EOF'
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["opencode-antigravity-auth@latest"],
-  "provider": {
-    "google": {}
-  },
-  "model": "google/antigravity-gemini-3-pro"
-}
-EOF
-        check_item "Configurar plugin" "ok" "${OPCODE_CONFIG_FILE}"
+        local bk="$OPCODE_CONFIG_FILE.backup.$(date +%Y%m%d-%H%M%S)"
+        cp "$OPCODE_CONFIG_FILE" "$bk"
+        check_item "Respaldo opencode" "ok" "${bk}"
     fi
 
+    echo "$opencode_config" > "$OPCODE_CONFIG_FILE"
+    check_item "Configurar plugin" "ok" "${OPCODE_CONFIG_FILE}"
+
     # Verificar que el plugin esta instalado en opencode
-    if [ ! -d "$HOME/.opencode/plugins/opencode-antigravity-auth" ] && \
-       [ ! -d "$HOME/.local/share/opencode/plugins/opencode-antigravity-auth" ]; then
+    if ! find "$HOME" -maxdepth 4 -type d -path "*/opencode-antigravity-auth" -print -quit &>/dev/null 2>&1; then
         echo ""
         echo -e "  ${DIM}Instalando plugin en opencode...${RESET}"
         opencode plugin opencode-antigravity-auth@latest &>/dev/null || true
@@ -507,7 +463,7 @@ print_summary() {
     echo ""
     printf "    ${DIM}%-30s ${RESET}%s\n" "Bootstrapper:" "$AGY_BIN_DIR/agy"
     printf "    ${DIM}%-30s ${RESET}%s\n" "Motor:" "$AGY_BIN_DIR/agy.va39"
-    if [ -d "$BACKUP_DIR" ] && ls "$BACKUP_DIR"/agy* &>/dev/null; then
+    if [ -d "$BACKUP_DIR" ] && [ -n "$(find "$BACKUP_DIR" -maxdepth 1 -name 'agy*' -print -quit 2>/dev/null)" ]; then
         printf "    ${DIM}%-30s ${RESET}%s\n" "Respaldo:" "$BACKUP_DIR/"
     fi
     echo ""
@@ -571,7 +527,7 @@ do_uninstall() {
         removed=true
     fi
 
-    if ! $removed; then
+    if [ "$removed" != "true" ]; then
         echo -e "  ${YELLOW}−${RESET} No se encontro instalacion de agy."
     fi
 
@@ -658,14 +614,16 @@ main() {
 
     local current_version
     current_version=$(detect_installed_version)
-    if [ -n "$current_version" ]; then
-        check_existing
+    if [ -n "$current_version" ] && ! check_existing "$current_version"; then
+        exit 0
     fi
 
     backup_existing
+
+    INSTALL_FAILED=true
     install_agy
-    configure_shell_path
     verify_installation
+    INSTALL_FAILED=false
 
     echo ""
     if ask_yes_no "¿Deseas integrar agy con opencode?" "S"; then

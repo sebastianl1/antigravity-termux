@@ -32,7 +32,7 @@ parcheado para funcionar correctamente en Termux.
 
 ```bash
 # Clonar el repositorio
-git https://github.com/sebastianl1/antigravity_termux.git
+git clone https://github.com/sebastianl1/antigravity_termux.git
 cd antigravity-termux
 
 # Ejecutar el instalador
