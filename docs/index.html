@@ -3,122 +3,659 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO básico -->
   <title>Antigravity CLI en Termux — Instalación nativa para Android ARM64</title>
-  <meta name="description" content="Instala Antigravity CLI (agy) de forma nativa en Termux para Android ARM64 (aarch64). Sin proot ni máquinas virtuales. Guía paso a paso con el asistente de IA de Google en tu terminal.">
-  <meta name="keywords" content="antigravity termux, antigravity cli android, agy termux, instalar antigravity en android, antigravity aarch64, ai terminal android, opencode antigravity, gemini termux">
+  <meta name="description" content="Instala Antigravity CLI (agy) de forma nativa en Termux para Android ARM64 (aarch64). Sin proot, sin máquinas virtuales. Guía paso a paso, comandos y solución de problemas para tener el asistente de IA de Google en tu terminal Android.">
+  <meta name="keywords" content="antigravity termux, antigravity cli android, agy termux, instalar antigravity en android, antigravity aarch64, antigravity arm64, ai terminal android, agy cli termux, gemini termux, antigravity google android, inteligencia artificial terminal android, instalar agy, antigravity cli instalacion, termux ai, antigravity without proot, antigravity cli opencode">
   <meta name="author" content="Sebastian Laguna">
   <meta name="robots" content="index, follow">
+  <meta name="revisit-after" content="7 days">
+  <meta name="language" content="Spanish">
+  <meta name="distribution" content="global">
+  <meta name="rating" content="general">
+  <meta name="theme-color" content="#0b0d12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
   <link rel="canonical" href="https://sebastianl1.github.io/antigravity-termux/">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sebastianl1.github.io/antigravity-termux/">
-  <meta property="og:title" content="Antigravity CLI en Termux — Instalación nativa para Android">
-  <meta property="og:description" content="Instala Antigravity CLI (agy) de forma nativa en Termux para Android ARM64. Sin proot ni VMs. Guía paso a paso.">
+  <meta property="og:title" content="Antigravity CLI en Termux — Instalación nativa para Android ARM64">
+  <meta property="og:description" content="Instala Antigravity CLI (agy) de forma nativa en Termux para Android ARM64. Sin proot ni máquinas virtuales. Guía paso a paso con el asistente de IA de Google en tu terminal.">
   <meta property="og:image" content="https://sebastianl1.github.io/antigravity-termux/imagenes/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Antigravity CLI funcionando dentro de Termux en Android ARM64">
+  <meta property="og:site_name" content="Antigravity CLI - Termux">
   <meta property="og:locale" content="es_ES">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Antigravity CLI en Termux — Instalación nativa para Android">
+  <meta name="twitter:site" content="@sebastianl1">
+  <meta name="twitter:creator" content="@sebastianl1">
+  <meta name="twitter:title" content="Antigravity CLI en Termux — Instalación nativa para Android ARM64">
   <meta name="twitter:description" content="Instala Antigravity CLI (agy) de forma nativa en Termux para Android ARM64. Sin proot ni VMs.">
   <meta name="twitter:image" content="https://sebastianl1.github.io/antigravity-termux/imagenes/og-image.jpg">
-  <!-- JSON-LD -->
+  <meta name="twitter:image:alt" content="Antigravity CLI funcionando dentro de Termux en Android ARM64">
+
+  <!-- JSON-LD: SoftwareApplication -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Antigravity CLI - Termux",
-    "operatingSystem": "Android (Termux, ARM64)",
+    "operatingSystem": "Android (Termux, ARM64 aarch64)",
     "applicationCategory": "DeveloperApplication",
+    "applicationSubCategory": "AI Assistant",
     "description": "Instalación nativa de Antigravity CLI (agy) en Termux para Android ARM64, sin proot ni máquinas virtuales.",
     "author": { "@type": "Person", "name": "Sebastian Laguna" },
     "license": "https://opensource.org/licenses/MIT",
-    "url": "https://github.com/sebastianl1/antigravity-termux"
+    "url": "https://github.com/sebastianl1/antigravity-termux",
+    "softwareVersion": "1.2.0",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "ratingCount": "1" },
+    "featureList": "Instalación nativa en Termux, sin proot, bootstrapper Android/Bionic, engine glibc parcheado, integración con opencode"
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Qué es Antigravity CLI (agy)?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Antigravity CLI (agy) es el asistente de inteligencia artificial de Google en tu terminal. Este proyecto permite instalarlo de forma nativa en Termux para Android ARM64, sin emuladores." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Necesito root o proot para instalarlo?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. La instalación es 100% nativa gracias a un bootstrapper compilado para Android (Bionic) y un engine glibc parcheado. No se requieren root, proot, máquinas virtuales ni Cloud Shell." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Por qué debo instalar Termux desde F-Droid y no desde Google Play?",
+        "acceptedAnswer": { "@type": "Answer", "text": "La versión de Termux en Google Play está desactualizada y abandonada. La versión oficial se mantiene en F-Droid (https://f-droid.org/packages/com.termux/), que es la única compatible con este instalador." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué es agy.va39?",
+        "acceptedAnswer": { "@type": "Answer", "text": "agy.va39 es el engine de Antigravity CLI parcheado para funcionar con glibc en Termux. Es un binario de aproximadamente 160MB que ejecuta el agy (bootstrapper) mediante el loader glibc." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Es compatible con mi dispositivo Android?",
+        "acceptedAnswer": { "@type": "Answer", "text": "El instalador solo funciona en dispositivos ARM64 (aarch64). Verifica tu arquitectura con 'uname -m'; debe mostrar 'aarch64'." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cómo actualizo Antigravity CLI?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Ejecuta 'agy update' para actualizar a la última versión, o vuelve a ejecutar 'bash install.sh' en el repositorio clonado para reinstalar la versión más reciente." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cómo desinstalo agy?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Ejecuta 'bash install.sh --uninstall' en el repositorio clonado. Esto elimina los binarios de $PREFIX/bin. También puedes eliminar la configuración de opencode y los respaldos manualmente." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Puedo usar los modelos de Antigravity desde opencode?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Sí. El instalador configura automáticamente el plugin opencode-antigravity-auth. Luego usa 'opencode run \"consulta\" --model google/antigravity-gemini-3-pro' para usar los modelos directamente." }
+      }
+    ]
+  }
+  </script>
+
+  <!-- JSON-LD: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://sebastianl1.github.io/antigravity-termux/" },
+      { "@type": "ListItem", "position": 2, "name": "Antigravity CLI en Termux", "item": "https://sebastianl1.github.io/antigravity-termux/" }
+    ]
+  }
+  </script>
+
+  <!-- JSON-LD: WebSite + Person -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Antigravity CLI - Termux",
+    "url": "https://sebastianl1.github.io/antigravity-termux/",
+    "inLanguage": "es",
+    "author": { "@type": "Person", "name": "Sebastian Laguna", "url": "https://github.com/sebastianl1" }
   }
   </script>
 
   <style>
+    :root {
+      --bg: #0b0d12;
+      --bg2: #10131b;
+      --card: #151a23;
+      --border: #232a36;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --dim: #6b7280;
+      --purple: #8b5cf6;
+      --pink: #ec4899;
+      --cyan: #22d3ee;
+      --green: #34d399;
+      --grad: linear-gradient(90deg, #8b5cf6, #ec4899);
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0b0d12;
-      color: #e5e7eb;
-      line-height: 1.6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 820px; margin: 0 auto; padding: 40px 20px 60px; }
-    header { text-align: center; margin-bottom: 40px; }
-    h1 { font-size: 2rem; color: #fff; margin-bottom: 12px; }
-    h1 span { background: linear-gradient(90deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .tagline { color: #9ca3af; font-size: 1.1rem; }
+    ::selection { background: rgba(139, 92, 246, .35); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #2b3342; border-radius: 6px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3a4457; }
+    a { color: #a78bfa; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: "SF Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace; }
+
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+    /* Navbar */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(11, 13, 18, .82);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 22px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #fff; font-size: 1.02rem; }
+    .nav-logo:hover { text-decoration: none; }
+    .nav-logo svg { width: 24px; height: 24px; }
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-links a { color: var(--muted); font-size: .92rem; }
+    .nav-links a:hover { color: #fff; text-decoration: none; }
     .btn {
-      display: inline-block; margin: 20px 8px 0; padding: 12px 26px; border-radius: 8px;
-      background: linear-gradient(90deg, #8b5cf6, #ec4899); color: #fff; font-weight: 600;
-      text-decoration: none; font-size: 1rem; border: none; cursor: pointer;
+      display: inline-block; padding: 11px 24px; border-radius: 9px;
+      background: var(--grad); color: #fff; font-weight: 600; font-size: .95rem;
+      border: none; cursor: pointer; text-decoration: none; transition: transform .15s, box-shadow .15s;
     }
-    .btn.ghost { background: transparent; border: 1px solid #374151; color: #d1d5db; }
-    .btn:hover { opacity: .9; }
-    .card {
-      background: #151a23; border: 1px solid #232a36; border-radius: 12px;
-      padding: 24px; margin: 20px 0;
+    .btn:hover { text-decoration: none; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(139,92,246,.35); }
+    .btn.ghost { background: transparent; border: 1px solid #374151; color: #d1d5db; box-shadow: none; }
+    .btn.ghost:hover { border-color: var(--purple); color: #fff; }
+    .btn.small { padding: 8px 16px; font-size: .85rem; }
+
+    /* Hero */
+    .hero { position: relative; text-align: center; padding: 84px 22px 40px; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: -20% -10% auto; height: 420px; z-index: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,.22), transparent 62%);
     }
-    h2 { font-size: 1.35rem; color: #fff; margin-bottom: 12px; }
-    pre {
-      background: #0b0d12; border: 1px solid #232a36; border-radius: 8px;
-      padding: 14px; overflow-x: auto; font-size: .9rem; margin: 12px 0;
+    .hero > * { position: relative; z-index: 1; }
+    .badge-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 999px;
+      background: rgba(139,92,246,.12); border: 1px solid rgba(139,92,246,.35); color: #c4b5fd; font-size: .8rem; font-weight: 600;
     }
-    code { font-family: "SF Mono", "Cascadia Code", Consolas, monospace; }
-    ul { padding-left: 20px; }
-    li { margin: 6px 0; }
-    a { color: #a78bfa; }
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-    .feature { background: #151a23; border: 1px solid #232a36; border-radius: 10px; padding: 16px; }
-    .feature h3 { color: #c4b5fd; font-size: 1rem; margin-bottom: 6px; }
-    footer { text-align: center; margin-top: 40px; color: #6b7280; font-size: .9rem; }
+    .pill.green { background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.3); color: #6ee7b7; }
+    h1 { font-size: clamp(1.9rem, 5vw, 3.2rem); line-height: 1.15; color: #fff; font-weight: 800; letter-spacing: -.02em; }
+    h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .tagline { color: var(--muted); font-size: 1.12rem; max-width: 640px; margin: 18px auto 0; }
+    .hero-cta { margin-top: 30px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .hero-meta { margin-top: 20px; color: var(--dim); font-size: .85rem; }
+
+    /* Terminal mockup */
+    .term-wrap { margin: 46px auto 0; max-width: 760px; text-align: left; }
+    .term {
+      background: #0d1017; border: 1px solid #2b3342; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(139,92,246,.08);
+    }
+    .term-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: #141926; border-bottom: 1px solid #232a36; }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .term-bar span.title { margin-left: 8px; color: var(--dim); font-size: .8rem; }
+    .term-body img { width: 100%; display: block; }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 64px 0; }
+    .stat {
+      text-align: center; padding: 22px 12px; background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    }
+    .stat b { display: block; font-size: 1.5rem; color: #fff; }
+    .stat span { color: var(--muted); font-size: .85rem; }
+
+    /* Secciones */
+    section { padding: 72px 0; }
+    section.alt { background: linear-gradient(180deg, var(--bg), #0d1017); }
+    .sec-head { text-align: center; max-width: 640px; margin: 0 auto 46px; }
+    .sec-eyebrow { color: var(--purple); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; font-size: .78rem; margin-bottom: 10px; }
+    .sec-head h2 { font-size: clamp(1.5rem, 3.5vw, 2.1rem); color: #fff; font-weight: 800; }
+    .sec-head p { color: var(--muted); margin-top: 12px; }
+
+    /* Steps */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; counter-reset: step; }
+    .step { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 26px 22px; }
+    .step::before {
+      counter-increment: step; content: counter(step);
+      position: absolute; top: -16px; left: 22px; width: 34px; height: 34px; border-radius: 50%;
+      background: var(--grad); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 18px rgba(139,92,246,.4);
+    }
+    .step h3 { color: #fff; font-size: 1.05rem; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: .92rem; }
+
+    /* Features */
+    .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+    .feat { display: flex; gap: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; transition: border-color .2s, transform .2s; }
+    .feat:hover { border-color: rgba(139,92,246,.5); transform: translateY(-2px); }
+    .feat-icon {
+      flex-shrink: 0; width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      background: rgba(139,92,246,.14); border: 1px solid rgba(139,92,246,.3); color: #c4b5fd;
+    }
+    .feat-icon svg { width: 24px; height: 24px; }
+    .feat h3 { color: #fff; font-size: 1rem; margin-bottom: 6px; }
+    .feat p { color: var(--muted); font-size: .9rem; }
+
+    /* Terminal + copy */
+    .term-code { position: relative; margin: 14px 0; }
+    .term-code pre {
+      background: #0d1017; border: 1px solid #2b3342; border-radius: 12px; padding: 18px 52px 18px 18px;
+      overflow-x: auto; font-size: .88rem; line-height: 1.7;
+    }
+    .term-code .c-copy {
+      position: absolute; top: 12px; right: 12px; padding: 6px 12px; font-size: .75rem;
+      background: #1a2130; color: var(--muted); border: 1px solid #2b3342; border-radius: 7px; cursor: pointer;
+    }
+    .term-code .c-copy:hover { color: #fff; border-color: var(--purple); }
+    .term-code .c-copy.ok { color: var(--green); border-color: rgba(52,211,153,.5); }
+    .cmd { color: #c4b5fd; font-weight: 600; }
+    .cm { color: var(--muted); }
+
+    /* Tabs instalación */
+    .tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 22px; }
+    .tab {
+      padding: 9px 20px; border-radius: 9px; border: 1px solid var(--border); background: var(--card);
+      color: var(--muted); cursor: pointer; font-size: .9rem; font-weight: 600;
+    }
+    .tab.active { background: var(--grad); color: #fff; border-color: transparent; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeUp .35s ease; }
+
+    /* FAQ */
+    .faq { max-width: 760px; margin: 0 auto; }
+    .faq-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; background: var(--card); }
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: none; color: #fff; font-size: 1rem; font-weight: 600;
+      padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .faq-q .chev { transition: transform .25s; color: var(--purple); flex-shrink: 0; }
+    .faq-item.open .chev { transform: rotate(180deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .faq-a p { padding: 0 20px 18px; color: var(--muted); font-size: .92rem; }
+
+    /* opencode */
+    .opencode-box { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: center; }
+    @media (max-width: 800px) { .opencode-box { grid-template-columns: 1fr; } }
+    .opencode-box h3 { color: #fff; font-size: 1.2rem; margin-bottom: 10px; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 44px 0 56px; margin-top: 40px; }
+    .foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 28px; }
+    .foot-grid h4 { color: #fff; font-size: .9rem; margin-bottom: 12px; }
+    .foot-grid ul { list-style: none; }
+    .foot-grid li { margin: 8px 0; }
+    .foot-grid a { color: var(--muted); font-size: .88rem; }
+    .foot-grid a:hover { color: #fff; }
+    .foot-bottom { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--border); color: var(--dim); font-size: .82rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .foot-tags { color: var(--dim); font-size: .78rem; line-height: 2; }
+
+    /* Animaciones */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .nav-links a:not(.btn) { display: none; }
+      .hero { padding: 56px 16px 30px; }
+      section { padding: 56px 0; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <img src="imagenes/Antigravity.jpg" alt="Antigravity CLI funcionando en Termux" width="600" style="max-width:100%;border-radius:12px;margin-bottom:24px;">
-      <h1>Antigravity CLI <span>en Termux</span></h1>
-      <p class="tagline">Instalación nativa para Android ARM64 (aarch64). Sin proot, sin VMs, sin Cloud Shell.</p>
-      <a class="btn" href="https://github.com/sebastianl1/antigravity-termux">Ver en GitHub</a>
-      <a class="btn ghost" href="https://github.com/sebastianl1/antigravity-termux#instalacion">Guía de instalación</a>
-    </header>
 
-    <div class="card">
-      <h2>Instalación rápida</h2>
-      <p>Abre Termux y ejecuta:</p>
-      <pre><code>pkg update && pkg upgrade -y
-pkg install git curl tar -y
-git clone https://github.com/sebastianl1/antigravity-termux.git
-cd antigravity-termux
-bash install.sh</code></pre>
-      <p>¿Es tu primera vez con Termux? Consulta la <a href="https://github.com/sebastianl1/antigravity-termux#gu%C3%ADa-para-principiantes-en-termux">guía para principiantes</a>.</p>
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 10h6M9 14h4"/></svg>
+        Antigravity <span class="grad" style="-webkit-text-fill-color:initial">· Termux</span>
+      </a>
+      <div class="nav-links">
+        <a href="#funciona">Cómo funciona</a>
+        <a href="#caracteristicas">Características</a>
+        <a href="#instalacion">Instalación</a>
+        <a href="#uso">Uso</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn small" href="https://github.com/sebastianl1/antigravity-termux" rel="noopener">GitHub</a>
+      </div>
     </div>
+  </nav>
 
-    <div class="card">
-      <h2>Características</h2>
-      <div class="features">
-        <div class="feature"><h3>100% nativo</h3><p>Bootstrapper compilado para Android/Bionic, sin emuladores.</p></div>
-        <div class="feature"><h3>Engine glibc parcheado</h3><p>Compatible con Termux: DNS y TLS configurados automáticamente.</p></div>
-        <div class="feature"><h3>Integración con opencode</h3><p>Usa los modelos de Antigravity desde opencode con un comando.</p></div>
-        <div class="feature"><h3>Instalación con un clic</h3><p>Script interactivo que verifica, instala y configura todo.</p></div>
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="badge-row">
+        <span class="pill">v1.2.0</span>
+        <span class="pill green">100% nativo</span>
+        <span class="pill">Sin proot</span>
+        <span class="pill">ARM64</span>
+      </div>
+      <h1>Antigravity CLI <span class="grad">en Termux</span></h1>
+      <p class="tagline">Instala el asistente de inteligencia artificial de Google directamente en tu terminal Android. Nativo, rápido y sin emuladores.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#instalacion">Instalar ahora</a>
+        <a class="btn ghost" href="https://github.com/sebastianl1/antigravity-termux" rel="noopener">Ver en GitHub</a>
+      </div>
+      <p class="hero-meta">Open Source · Licencia MIT · Por <a href="https://github.com/sebastianl1">Sebastian Laguna</a></p>
+
+      <div class="term-wrap">
+        <div class="term">
+          <div class="term-bar">
+            <span class="term-dot" style="background:#ff5f57"></span>
+            <span class="term-dot" style="background:#febc2e"></span>
+            <span class="term-dot" style="background:#28c840"></span>
+            <span class="title">Termux — agy</span>
+          </div>
+          <img src="imagenes/Antigravity.jpg" alt="Screenshot de Antigravity CLI ejecutándose en Termux dentro de Android ARM64">
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="wrap reveal">
+      <div class="stats">
+        <div class="stat"><b>100%</b><span>Nativo Android</span></div>
+        <div class="stat"><b>0</b><span>Proot / VMs</span></div>
+        <div class="stat"><b>~180MB</b><span>Espacio requerido</span></div>
+        <div class="stat"><b>MIT</b><span>Open Source</span></div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Uso</h2>
-      <pre><code>agy              # Iniciar la CLI interactiva
-agy login        # Autenticar con Google (OAuth)
-agy --version    # Verificar la versión
-agy update       # Actualizar a la última versión</code></pre>
-    </div>
+    <!-- Cómo funciona -->
+    <section id="funciona" class="alt">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">Cómo funciona</div>
+          <h2>De la terminal a la IA en 3 pasos</h2>
+          <p>Un bootstrapper compilado para Android (Bionic) ejecuta un engine glibc parcheado sin emuladores ni configuraciones manuales.</p>
+        </div>
+        <div class="steps">
+          <div class="step reveal"><h3>Bootstrapper nativo</h3><p>El binario <code>agy</code> está compilado para Android/Bionic y limpia las variables de entorno que interfieren.</p></div>
+          <div class="step reveal"><h3>DNS y TLS listos</h3><p>Configura la resolución DNS (<code>GODEBUG=netdns=cgo</code>) y los certificados TLS de Termux automáticamente.</p></div>
+          <div class="step reveal"><h3>Engine glibc parcheado</h3><p><code>agy.va39</code> se ejecuta a través del loader glibc. Todo sin <code>proot</code> ni wrappers.</p></div>
+        </div>
+      </div>
+    </section>
 
-    <footer>
-      Proyecto de código abierto — Licencia MIT. Creado por Sebastian Laguna.
-    </footer>
-  </div>
+    <!-- Características -->
+    <section id="caracteristicas">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">Características</div>
+          <h2>Hecho para Termux, listo para ti</h2>
+          <p>Todo lo que necesitas para tener Antigravity CLI funcionando en tu Android ARM64.</p>
+        </div>
+        <div class="feat-grid">
+          <div class="feat reveal">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+            <div><h3>100% nativo</h3><p>Bootstrapper compilado para Android/Bionic. Nada de emuladores ni máquinas virtuales.</p></div>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <div><h3>Engine glibc parcheado</h3><p>Compatible con Termux. Resuelve los problemas de DNS y TLS de forma transparente.</p></div>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+            <div><h3>Integración con opencode</h3><p>Usa los modelos de Antigravity desde opencode con un solo comando.</p></div>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <div><h3>Instalación con un clic</h3><p>Script interactivo que verifica el entorno, descarga, respalda y configura todo.</p></div>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div><h3>Verificación de integridad</h3><p>Comprueba que los binarios descargados sean válidos (ELF y tamaño) antes de instalar.</p></div>
+          </div>
+          <div class="feat reveal">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></div>
+            <div><h3>Desinstalación limpia</h3><p><code>bash install.sh --uninstall</code> elimina binarios y deja un respaldo por seguridad.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Instalación -->
+    <section id="instalacion" class="alt">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">Instalación</div>
+          <h2>Listo en menos de 2 minutos</h2>
+          <p>Elige tu nivel y copia el bloque de comandos.</p>
+        </div>
+
+        <div class="tabs reveal">
+          <button class="tab active" data-tab="nuevo">Nuevo en Termux</button>
+          <button class="tab" data-tab="experto">Ya uso Termux</button>
+        </div>
+
+        <div class="tab-pane active" id="pane-nuevo">
+          <div class="term-code reveal">
+            <pre><code><span class="cm"># 1. Actualizar e instalar dependencias</span>
+<span class="cmd">pkg update</span> <span class="cmd">&&</span> <span class="cmd">pkg upgrade</span> -y
+<span class="cmd">pkg install</span> git curl tar -y
+
+<span class="cm"># 2. Clonar e instalar</span>
+<span class="cmd">git clone</span> https://github.com/sebastianl1/antigravity-termux.git
+<span class="cmd">cd</span> antigravity-termux
+<span class="cmd">bash</span> install.sh</code></pre>
+            <button class="c-copy" data-copy>Copiar</button>
+          </div>
+          <p style="text-align:center;color:var(--muted);font-size:.9rem" class="reveal">¿Primera vez con Termux? <a href="https://github.com/sebastianl1/antigravity-termux#gu%C3%ADa-para-principiantes-en-termux">Lee la guía para principiantes</a> antes de empezar.</p>
+        </div>
+
+        <div class="tab-pane" id="pane-experto">
+          <div class="term-code reveal">
+            <pre><code><span class="cmd">git clone</span> https://github.com/sebastianl1/antigravity-termux.git
+<span class="cmd">cd</span> antigravity-termux
+<span class="cmd">bash</span> install.sh</code></pre>
+            <button class="c-copy" data-copy>Copiar</button>
+          </div>
+          <p style="text-align:center;color:var(--muted);font-size:.9rem" class="reveal">El instalador verifica el entorno, respalda versiones previas y valida la integridad de los binarios.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Uso + opencode -->
+    <section id="uso">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">Uso</div>
+          <h2>Empieza a usar Antigravity</h2>
+          <p>Comandos principales para trabajar con el asistente de IA desde tu terminal.</p>
+        </div>
+
+        <div class="term-code reveal" style="max-width:640px;margin:0 auto 46px">
+          <pre><code><span class="cmd">agy</span>              <span class="cm"># Iniciar la CLI interactiva</span>
+<span class="cmd">agy login</span>        <span class="cm"># Autenticar con Google (OAuth)</span>
+<span class="cmd">agy --version</span>    <span class="cm"># Verificar la versión</span>
+<span class="cmd">agy update</span>       <span class="cm"># Actualizar a la última versión</span></code></pre>
+          <button class="c-copy" data-copy>Copiar</button>
+        </div>
+
+        <div class="opencode-box">
+          <div class="reveal">
+            <h3>Integración con opencode</h3>
+            <p style="color:var(--muted)">Si tienes <a href="https://opencode.ai" rel="noopener">opencode</a> instalado, el instalador configura automáticamente el plugin <code>opencode-antigravity-auth</code>.</p>
+            <p style="color:var(--muted);margin-top:10px">Usa los modelos de Antigravity directamente:</p>
+            <div class="term-code">
+              <pre style="margin-top:10px"><code><span class="cmd">opencode run</span> <span class="cm">"Escribe un script en Python"</span> --model google/antigravity-gemini-3-pro</code></pre>
+              <button class="c-copy" data-copy>Copiar</button>
+            </div>
+          </div>
+          <div class="reveal">
+            <h3>Modelos disponibles</h3>
+            <ul style="color:var(--muted);font-size:.92rem;padding-left:18px">
+              <li><code>google/antigravity-gemini-3-pro</code> — Gemini 3 Pro</li>
+              <li><code>google/antigravity-gemini-3.1-pro</code> — Gemini 3.1 Pro</li>
+              <li><code>google/antigravity-gemini-3-flash</code> — Gemini 3 Flash</li>
+              <li><code>google/antigravity-claude-sonnet-4-6</code> — Claude Sonnet 4.6</li>
+              <li><code>google/antigravity-claude-opus-4-6-thinking</code> — Claude Opus 4.6 Thinking</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="alt">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <div class="sec-eyebrow">FAQ</div>
+          <h2>Preguntas frecuentes</h2>
+          <p>Resolvemos las dudas más comunes sobre la instalación de Antigravity CLI en Termux.</p>
+        </div>
+        <div class="faq">
+          <div class="faq-item reveal"><button class="faq-q">¿Qué es Antigravity CLI (agy)?<span class="chev">▼</span></button><div class="faq-a"><p>Antigravity CLI (agy) es el asistente de inteligencia artificial de Google en tu terminal. Este proyecto permite instalarlo de forma nativa en Termux para Android ARM64, sin emuladores.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Necesito root o proot para instalarlo?<span class="chev">▼</span></button><div class="faq-a"><p>No. La instalación es 100% nativa gracias a un bootstrapper compilado para Android (Bionic) y un engine glibc parcheado. No se requieren root, proot, máquinas virtuales ni Cloud Shell.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Por qué debo instalar Termux desde F-Droid y no desde Google Play?<span class="chev">▼</span></button><div class="faq-a"><p>La versión de Termux en Google Play está desactualizada y abandonada. La versión oficial se mantiene en <a href="https://f-droid.org/packages/com.termux/">F-Droid</a>, que es la única compatible con este instalador.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Qué es agy.va39?<span class="chev">▼</span></button><div class="faq-a"><p>agy.va39 es el engine de Antigravity CLI parcheado para funcionar con glibc en Termux. Es un binario de aproximadamente 160MB que el bootstrapper agy ejecuta mediante el loader glibc.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Es compatible con mi dispositivo Android?<span class="chev">▼</span></button><div class="faq-a"><p>El instalador solo funciona en dispositivos ARM64 (aarch64). Verifica tu arquitectura con <code>uname -m</code>; debe mostrar <code>aarch64</code>.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Cómo actualizo Antigravity CLI?<span class="chev">▼</span></button><div class="faq-a"><p>Ejecuta <code>agy update</code> para actualizar a la última versión, o vuelve a ejecutar <code>bash install.sh</code> en el repositorio clonado para reinstalar la versión más reciente.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Cómo desinstalo agy?<span class="chev">▼</span></button><div class="faq-a"><p>Ejecuta <code>bash install.sh --uninstall</code> en el repositorio clonado. Esto elimina los binarios de <code>$PREFIX/bin</code>. También puedes eliminar la configuración de opencode y los respaldos manualmente.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Puedo usar los modelos de Antigravity desde opencode?<span class="chev">▼</span></button><div class="faq-a"><p>Sí. El instalador configura automáticamente el plugin <code>opencode-antigravity-auth</code>. Luego usa <code>opencode run "consulta" --model google/antigravity-gemini-3-pro</code> para usar los modelos directamente.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <h4>Antigravity CLI · Termux</h4>
+          <p style="color:var(--muted);font-size:.88rem">Instalación nativa de Antigravity CLI (agy) en Termux para Android ARM64. Sin proot, sin VMs, sin Cloud Shell.</p>
+        </div>
+        <div>
+          <h4>Recursos</h4>
+          <ul>
+            <li><a href="#instalacion">Instalación</a></li>
+            <li><a href="#uso">Comandos</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="https://github.com/sebastianl1/antigravity-termux/blob/main/README.md" rel="noopener">README</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Enlaces</h4>
+          <ul>
+            <li><a href="https://github.com/sebastianl1/antigravity-termux" rel="noopener">Repositorio</a></li>
+            <li><a href="https://github.com/wallentx/antigravity-cli-termux" rel="noopener">Fork de wallentx</a></li>
+            <li><a href="https://github.com/NoeFabris/opencode-antigravity-auth" rel="noopener">Plugin opencode</a></li>
+            <li><a href="https://opencode.ai" rel="noopener">opencode</a></li>
+            <li><a href="https://f-droid.org/packages/com.termux/" rel="noopener">Termux en F-Droid</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Créditos</h4>
+          <ul>
+            <li><a href="https://github.com/sebastianl1" rel="noopener">Sebastian Laguna</a> — Autor</li>
+            <li><a href="https://github.com/wallentx/antigravity-cli-termux" rel="noopener">wallentx</a> — Parches VA39</li>
+            <li><a href="https://github.com/NoeFabris/opencode-antigravity-auth" rel="noopener">NoeFabris</a> — Plugin</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Antigravity CLI · Termux — Licencia MIT</span>
+        <span>Hecho con ♥ para la comunidad Termux</span>
+      </div>
+      <div class="foot-tags">
+        antigravity termux · agy cli · instalar antigravity android · antigravity arm64 · ai terminal · gemini termux · opencode
+      </div>
+    </div>
+  </footer>
+
+  <script defer>
+    (function () {
+      // Copy buttons
+      document.querySelectorAll('.c-copy').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var pre = btn.parentElement.querySelector('pre');
+          var text = pre ? pre.innerText : '';
+          function done() {
+            btn.textContent = '¡Copiado!';
+            btn.classList.add('ok');
+            setTimeout(function () { btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 1600);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(done);
+          } else {
+            var ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta); done();
+          }
+        });
+      });
+
+      // FAQ accordion
+      document.querySelectorAll('.faq-q').forEach(function (q) {
+        q.addEventListener('click', function () {
+          var item = q.parentElement;
+          var answer = item.querySelector('.faq-a');
+          var isOpen = item.classList.contains('open');
+          document.querySelectorAll('.faq-item.open').forEach(function (it) {
+            it.classList.remove('open');
+            it.querySelector('.faq-a').style.maxHeight = null;
+          });
+          if (!isOpen) {
+            item.classList.add('open');
+            answer.style.maxHeight = answer.scrollHeight + 'px';
+          }
+        });
+      });
+
+      // Tabs
+      document.querySelectorAll('.tab').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+          document.querySelectorAll('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+          tab.classList.add('active');
+          document.getElementById('pane-' + tab.dataset.tab).classList.add('active');
+        });
+      });
+
+      // Reveal on scroll
+      var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.12 }) : null;
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        if (io) io.observe(el); else el.classList.add('in');
+      });
+    })();
+  </script>
 </body>
 </html>
