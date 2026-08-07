@@ -305,9 +305,25 @@
     .faq-a p { padding: 0 20px 18px; color: var(--muted); font-size: .92rem; }
 
     /* opencode */
-    .opencode-box { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: center; }
-    @media (max-width: 800px) { .opencode-box { grid-template-columns: 1fr; } }
+    .opencode-box { max-width: 760px; margin: 0 auto; }
     .opencode-box h3 { color: #fff; font-size: 1.2rem; margin-bottom: 10px; }
+    .model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 8px; }
+    .model-card {
+      display: flex; flex-direction: column; gap: 8px; text-align: left;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+      cursor: pointer; transition: border-color .2s, transform .2s; color: inherit; font: inherit; line-height: inherit;
+    }
+    .model-card:hover { border-color: rgba(139,92,246,.5); transform: translateY(-2px); }
+    .model-card:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+    .model-card .model-name { color: #fff; font-weight: 600; font-size: .98rem; }
+    .model-card .model-id {
+      font-family: "SF Mono", "Cascadia Code", Consolas, monospace; font-size: .78rem;
+      color: #c4b5fd; background: rgba(139,92,246,.1); border: 1px solid rgba(139,92,246,.25);
+      padding: 5px 10px; border-radius: 7px; overflow-wrap: anywhere; word-break: break-word; line-height: 1.45;
+    }
+    .model-card .model-copy { color: var(--dim); font-size: .72rem; }
+    .model-card.ok { border-color: rgba(52,211,153,.5); }
+    .model-card.ok .model-copy { color: var(--green); }
 
     /* Footer */
     footer { border-top: 1px solid var(--border); padding: 44px 0 56px; margin-top: 40px; }
@@ -327,10 +343,33 @@
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 
     /* Responsive */
+    img { max-width: 100%; height: auto; }
+    html { -webkit-text-size-adjust: 100%; }
+
     @media (max-width: 640px) {
       .nav-links a:not(.btn) { display: none; }
+      .nav-logo { font-size: .95rem; }
       .hero { padding: 56px 16px 30px; }
       section { padding: 56px 0; }
+      .hero-cta { flex-direction: column; align-items: stretch; max-width: 320px; margin-left: auto; margin-right: auto; }
+      .hero-cta .btn { text-align: center; }
+      .tabs { flex-direction: column; }
+      .tab { flex: 1; }
+      .foot-grid { grid-template-columns: 1fr; }
+      .term-bar span.title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    }
+    @media (max-width: 480px) {
+      .term-code pre { font-size: .82rem; }
+      .stat { padding: 16px 8px; }
+      .stat b { font-size: 1.25rem; }
+      .tagline { font-size: 1rem; }
+      .btn { padding: 12px 20px; min-height: 44px; }
+      .step { padding: 22px 18px; }
+      .feat { padding: 18px; }
+      .badge-row { gap: 6px; }
+      .pill { padding: 5px 10px; font-size: .74rem; }
+      .hero-meta { font-size: .8rem; }
+      .model-card { padding: 14px; }
     }
   </style>
 </head>
@@ -370,7 +409,7 @@
         <a class="btn" href="#instalacion">Instalar ahora</a>
         <a class="btn ghost" href="https://github.com/sebastianl1/antigravity-termux" rel="noopener">Ver en GitHub</a>
       </div>
-      <p class="hero-meta">Open Source · Licencia MIT · Por <a href="https://github.com/sebastianl1">Sebastian Laguna</a></p>
+      <p class="hero-meta">Open Source · Licencia MIT · Por <a href="https://sebastianl1.github.io/Portafolio/" rel="noopener">Sebastian Laguna</a></p>
 
       <div class="term-wrap">
         <div class="term">
@@ -506,25 +545,24 @@
           <button class="c-copy" data-copy>Copiar</button>
         </div>
 
-        <div class="opencode-box">
-          <div class="reveal">
-            <h3>Integración con opencode</h3>
-            <p style="color:var(--muted)">Si tienes <a href="https://opencode.ai" rel="noopener">opencode</a> instalado, el instalador configura automáticamente el plugin <code>opencode-antigravity-auth</code>.</p>
-            <p style="color:var(--muted);margin-top:10px">Usa los modelos de Antigravity directamente:</p>
-            <div class="term-code">
-              <pre style="margin-top:10px"><code><span class="cmd">opencode run</span> <span class="cm">"Escribe un script en Python"</span> --model google/antigravity-gemini-3-pro</code></pre>
-              <button class="c-copy" data-copy>Copiar</button>
-            </div>
+        <div class="opencode-box reveal">
+          <h3>Integración con opencode</h3>
+          <p style="color:var(--muted)">Si tienes <a href="https://opencode.ai" rel="noopener">opencode</a> instalado, el instalador configura automáticamente el plugin <code>opencode-antigravity-auth</code>. Usa los modelos de Antigravity directamente:</p>
+          <div class="term-code" style="margin-top:14px">
+            <pre><code><span class="cmd">opencode run</span> <span class="cm">"Escribe un script en Python"</span> --model google/antigravity-gemini-3-pro</code></pre>
+            <button class="c-copy" data-copy>Copiar</button>
           </div>
-          <div class="reveal">
-            <h3>Modelos disponibles</h3>
-            <ul style="color:var(--muted);font-size:.92rem;padding-left:18px">
-              <li><code>google/antigravity-gemini-3-pro</code> — Gemini 3 Pro</li>
-              <li><code>google/antigravity-gemini-3.1-pro</code> — Gemini 3.1 Pro</li>
-              <li><code>google/antigravity-gemini-3-flash</code> — Gemini 3 Flash</li>
-              <li><code>google/antigravity-claude-sonnet-4-6</code> — Claude Sonnet 4.6</li>
-              <li><code>google/antigravity-claude-opus-4-6-thinking</code> — Claude Opus 4.6 Thinking</li>
-            </ul>
+        </div>
+
+        <div class="reveal" style="max-width:760px;margin:44px auto 0">
+          <h3 style="color:#fff;font-size:1.2rem;margin-bottom:6px">Modelos disponibles</h3>
+          <p style="color:var(--muted);font-size:.92rem;margin-bottom:18px">Haz clic en un modelo para copiar su ID.</p>
+          <div class="model-grid">
+            <button class="model-card" data-model="google/antigravity-gemini-3-pro"><span class="model-name">Gemini 3 Pro</span><span class="model-id">google/antigravity-gemini-3-pro</span><span class="model-copy">Click para copiar</span></button>
+            <button class="model-card" data-model="google/antigravity-gemini-3.1-pro"><span class="model-name">Gemini 3.1 Pro</span><span class="model-id">google/antigravity-gemini-3.1-pro</span><span class="model-copy">Click para copiar</span></button>
+            <button class="model-card" data-model="google/antigravity-gemini-3-flash"><span class="model-name">Gemini 3 Flash</span><span class="model-id">google/antigravity-gemini-3-flash</span><span class="model-copy">Click para copiar</span></button>
+            <button class="model-card" data-model="google/antigravity-claude-sonnet-4-6"><span class="model-name">Claude Sonnet 4.6</span><span class="model-id">google/antigravity-claude-sonnet-4-6</span><span class="model-copy">Click para copiar</span></button>
+            <button class="model-card" data-model="google/antigravity-claude-opus-4-6-thinking"><span class="model-name">Claude Opus 4.6 Thinking</span><span class="model-id">google/antigravity-claude-opus-4-6-thinking</span><span class="model-copy">Click para copiar</span></button>
           </div>
         </div>
       </div>
@@ -574,6 +612,7 @@
           <h4>Enlaces</h4>
           <ul>
             <li><a href="https://github.com/sebastianl1/antigravity-termux" rel="noopener">Repositorio</a></li>
+            <li><a href="https://sebastianl1.github.io/Portafolio/" rel="noopener">Portafolio del autor</a></li>
             <li><a href="https://github.com/wallentx/antigravity-cli-termux" rel="noopener">Fork de wallentx</a></li>
             <li><a href="https://github.com/NoeFabris/opencode-antigravity-auth" rel="noopener">Plugin opencode</a></li>
             <li><a href="https://opencode.ai" rel="noopener">opencode</a></li>
@@ -583,7 +622,7 @@
         <div>
           <h4>Créditos</h4>
           <ul>
-            <li><a href="https://github.com/sebastianl1" rel="noopener">Sebastian Laguna</a> — Autor</li>
+            <li><a href="https://sebastianl1.github.io/Portafolio/" rel="noopener">Sebastian Laguna</a> — Autor</li>
             <li><a href="https://github.com/wallentx/antigravity-cli-termux" rel="noopener">wallentx</a> — Parches VA39</li>
             <li><a href="https://github.com/NoeFabris/opencode-antigravity-auth" rel="noopener">NoeFabris</a> — Plugin</li>
           </ul>
@@ -616,6 +655,28 @@
           } else {
             var ta = document.createElement('textarea');
             ta.value = text; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta); done();
+          }
+        });
+      });
+
+      // Model cards copy ID
+      document.querySelectorAll('.model-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+          var id = card.dataset.model;
+          function done() {
+            card.classList.add('ok');
+            card.querySelector('.model-copy').textContent = '¡Copiado!';
+            setTimeout(function () {
+              card.classList.remove('ok');
+              card.querySelector('.model-copy').textContent = 'Click para copiar';
+            }, 1600);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(id).then(done).catch(done);
+          } else {
+            var ta = document.createElement('textarea');
+            ta.value = id; document.body.appendChild(ta); ta.select();
             document.execCommand('copy'); document.body.removeChild(ta); done();
           }
         });
