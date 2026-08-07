@@ -211,13 +211,32 @@
     .btn.ghost:hover { border-color: var(--purple); color: #fff; }
     .btn.small { padding: 8px 16px; font-size: .85rem; }
 
-    /* Selector de idioma */
-    .lang-select {
+    /* Selector de idioma (dropdown custom) */
+    .lang-wrap { position: relative; }
+    .lang-btn {
+      display: flex; align-items: center; gap: 7px; cursor: pointer;
       background: var(--card); color: #fff; border: 1px solid var(--border);
-      border-radius: 8px; padding: 7px 10px; font-size: .85rem; cursor: pointer; font-weight: 600;
+      border-radius: 8px; padding: 7px 12px; font-size: .85rem; font-weight: 600; font-family: inherit;
     }
-    .lang-select:hover { border-color: rgba(139,92,246,.5); }
-    .lang-select:focus { outline: 2px solid var(--purple); outline-offset: 1px; }
+    .lang-btn:hover { border-color: rgba(139,92,246,.5); }
+    .lang-btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 1px; }
+    .lang-btn svg { width: 16px; height: 16px; color: #c4b5fd; flex-shrink: 0; }
+    .lang-btn .chev { width: 12px; height: 12px; transition: transform .25s; color: var(--muted); }
+    .lang-wrap.open .lang-btn .chev { transform: rotate(180deg); }
+    .lang-menu {
+      display: none; position: absolute; top: calc(100% + 8px); right: 0; z-index: 300;
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.5); padding: 5px; min-width: 148px; list-style: none;
+    }
+    .lang-menu.open { display: block; animation: fadeUp .2s ease; }
+    .lang-menu a {
+      display: flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 7px;
+      color: var(--muted); font-size: .85rem;
+    }
+    .lang-menu a:hover { background: rgba(139,92,246,.14); color: #fff; text-decoration: none; }
+    .lang-menu a[aria-selected="true"] { background: rgba(139,92,246,.14); color: #fff; }
+    .lang-menu .check { display: none; color: var(--green); font-weight: 700; }
+    .lang-menu a[aria-selected="true"] .check { display: inline; }
 
     /* Hero */
     .hero { position: relative; text-align: center; padding: 84px 22px 40px; overflow: hidden; }
@@ -370,7 +389,12 @@
 
     @media (max-width: 640px) {
       .nav-links a:not(.btn) { display: none; }
-      .nav-logo { font-size: .95rem; }
+      .nav-inner { padding: 0 14px; height: 58px; }
+      .nav-links { gap: 10px; }
+      .nav-logo { font-size: .92rem; gap: 8px; }
+      .nav-logo svg { width: 22px; height: 22px; }
+      .lang-btn { padding: 6px 10px; }
+      .btn.small { padding: 7px 14px; font-size: .8rem; }
       .hero { padding: 56px 16px 30px; }
       section { padding: 56px 0; }
       .hero-cta { flex-direction: column; align-items: stretch; max-width: 320px; margin-left: auto; margin-right: auto; }
@@ -381,6 +405,9 @@
       .term-bar span.title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     }
     @media (max-width: 480px) {
+      .nav-logo .grad { display: none; }
+      .lang-label { max-width: 76px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .lang-menu { min-width: 150px; max-height: 60vh; overflow-y: auto; }
       .term-code pre { font-size: .82rem; }
       .stat { padding: 16px 8px; }
       .stat b { font-size: 1.25rem; }
@@ -410,14 +437,21 @@
         <a href="#instalacion" data-i18n="nav.install">Instalación</a>
         <a href="#uso" data-i18n="nav.usage">Uso</a>
         <a href="#faq" data-i18n="nav.faq">FAQ</a>
-        <select id="langSelect" class="lang-select" aria-label="Idioma / Language">
-          <option value="es">Español</option>
-          <option value="en">English</option>
-          <option value="pt">Português</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-          <option value="zh">中文</option>
-        </select>
+        <div class="lang-wrap" id="langWrap">
+          <button type="button" class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Idioma / Language">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="lang-label" id="langLabel">Español</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <ul class="lang-menu" id="langMenu" role="listbox" aria-label="Idiomas">
+            <li><a role="option" aria-selected="true" data-lang="es" href="?lang=es"><span class="check">✓ </span>Español</a></li>
+            <li><a role="option" aria-selected="false" data-lang="en" href="?lang=en"><span class="check">✓ </span>English</a></li>
+            <li><a role="option" aria-selected="false" data-lang="pt" href="?lang=pt"><span class="check">✓ </span>Português</a></li>
+            <li><a role="option" aria-selected="false" data-lang="fr" href="?lang=fr"><span class="check">✓ </span>Français</a></li>
+            <li><a role="option" aria-selected="false" data-lang="de" href="?lang=de"><span class="check">✓ </span>Deutsch</a></li>
+            <li><a role="option" aria-selected="false" data-lang="zh" href="?lang=zh"><span class="check">✓ </span>中文</a></li>
+          </ul>
+        </div>
         <a class="btn small" href="https://github.com/sebastianl1/antigravity-termux" rel="noopener" data-i18n="nav.github">GitHub</a>
       </div>
     </div>
@@ -854,8 +888,14 @@
           var k = el.getAttribute('data-i18n');
           if (dict && dict[k] != null) el.innerHTML = dict[k];
         });
-        var sel = document.getElementById('langSelect');
-        if (sel) sel.value = current;
+        var label = document.getElementById('langLabel');
+        if (label) label.textContent = NAMES[current] || NAMES.es;
+        var menu = document.getElementById('langMenu');
+        if (menu) {
+          menu.querySelectorAll('a[data-lang]').forEach(function (a) {
+            a.setAttribute('aria-selected', a.dataset.lang === current ? 'true' : 'false');
+          });
+        }
       }
 
       function loadLang(lang, cb) {
@@ -877,18 +917,42 @@
         history.replaceState(null, '', url);
       });
 
-      var sel = document.getElementById('langSelect');
-      if (sel) {
-        sel.addEventListener('change', function () {
-          current = sel.value;
-          loadLang(current, function () {
-            if (current !== 'es' && !dict) { current = 'es'; dict = window.I18N_ES; }
-            apply();
-            try { localStorage.setItem(STORE_KEY, current); } catch (e) {}
-            var url = new URL(location.href);
-            url.searchParams.set('lang', current);
-            history.replaceState(null, '', url);
-          });
+      // ── Selector de idioma (dropdown custom) ──
+      var langWrap = document.getElementById('langWrap');
+      var langBtn = document.getElementById('langBtn');
+      var langMenu = document.getElementById('langMenu');
+
+      function closeLang() {
+        langWrap.classList.remove('open');
+        langMenu.classList.remove('open');
+        langBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      if (langBtn && langMenu) {
+        langBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var open = langWrap.classList.toggle('open');
+          langMenu.classList.toggle('open', open);
+          langBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        document.addEventListener('click', function (e) {
+          if (!langWrap.contains(e.target)) closeLang();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') closeLang();
+        });
+        langMenu.addEventListener('click', function (e) {
+          var a = e.target.closest ? e.target.closest('a[data-lang]') : null;
+          if (a) {
+            e.preventDefault();
+            var lang = a.dataset.lang;
+            closeLang();
+            if (lang && lang !== current) {
+              var url = new URL(location.href);
+              url.searchParams.set('lang', lang);
+              location.href = url.toString();
+            }
+          }
         });
       }
     })();
