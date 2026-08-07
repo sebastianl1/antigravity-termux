@@ -1,15 +1,16 @@
-# Antigravity CLI - Termux
+# Antigravity CLI para Termux — Instalación nativa en Android
 
 <p align="center">
-  <img src="imagenes/Antigravity.jpg" alt="Antigravity CLI" width="600">
+  <img src="imagenes/Antigravity.jpg" alt="Antigravity CLI en Termux - Instalación nativa" width="600">
 </p>
 
 <p align="center">
-  <img src="imagenes/Antigravity2.jpg" alt="Antigravity CLI" width="600">
+  <img src="imagenes/Antigravity2.jpg" alt="Antigravity CLI - Terminal interactiva en Android" width="600">
 </p>
 
-Instalacion nativa de **Antigravity CLI (agy)** en Termux para Android ARM64.
-Sin proot, sin VMs, sin Cloud Shell.
+**Instalación nativa de Antigravity CLI (agy) en Termux para Android ARM64 (aarch64).**
+Sin proot, sin máquinas virtuales, sin Cloud Shell. Obtén el asistente de IA de Google
+funcionando directamente en tu terminal Android.
 
 Este proyecto utiliza el fork comunitario
 [wallentx/antigravity-cli-termux](https://github.com/wallentx/antigravity-cli-termux)
@@ -18,11 +19,66 @@ parcheado para funcionar correctamente en Termux.
 
 ---
 
+## Guía para principiantes en Termux
+
+¿Es tu primera vez con Termux? Sigue estos pasos antes de instalar Antigravity:
+
+### 1. Instala Termux desde F-Droid
+
+Termux **no debe instalarse desde Google Play** (esa versión está desactualizada y rota).
+Instálalo desde el repositorio oficial:
+
+- Descarga **F-Droid**: <https://f-droid.org/>
+- Dentro de F-Droid busca **Termux** e instálalo
+- También puedes descargar el APK directo: <https://f-droid.org/packages/com.termux/>
+
+### 2. Actualiza los paquetes
+
+Abre Termux y ejecuta:
+
+```bash
+pkg update && pkg upgrade -y
+```
+
+### 3. Instala las herramientas básicas
+
+Git, curl y tar son necesarios para descargar e instalar Antigravity:
+
+```bash
+pkg install git curl tar -y
+```
+
+### 4. Verifica tu arquitectura
+
+Antigravity solo funciona en dispositivos **ARM64 (aarch64)**:
+
+```bash
+uname -m
+```
+
+Debe mostrar `aarch64`. Si muestra `armv7l` o `x86_64`, este instalador no es compatible.
+
+### 5. (Opcional) Da acceso al almacenamiento
+
+Solo si quieres que Termux acceda a tus archivos:
+
+```bash
+termux-setup-storage
+```
+
+### 6. ¡Listo para instalar Antigravity!
+
+Con Termux actualizado y git instalado, continúa con la sección de
+[Instalación](#instalacion) de abajo.
+
+---
+
 ## Requisitos
 
 - **Termux** instalado desde [F-Droid](https://f-droid.org/packages/com.termux/)
   (no desde Google Play)
 - **Dispositivo Android ARM64** (aarch64)
+- **Git, curl y tar** instalados (`pkg install git curl tar -y`)
 - **Conexion a internet** para descargar los binarios
 - Espacio libre: ~180MB
 
@@ -30,12 +86,26 @@ parcheado para funcionar correctamente en Termux.
 
 ## Instalacion
 
+### Opcion A: Usuario nuevo en Termux
+
 ```bash
-# Clonar el repositorio
-git clone https://github.com/sebastianl1/antigravity_termux.git
+# 1. Actualizar e instalar dependencias
+pkg update && pkg upgrade -y
+pkg install git curl tar -y
+
+# 2. Clonar el repositorio
+git clone https://github.com/sebastianl1/antigravity-termux.git
 cd antigravity-termux
 
-# Ejecutar el instalador
+# 3. Ejecutar el instalador
+bash install.sh
+```
+
+### Opcion B: Ya usas Termux
+
+```bash
+git clone https://github.com/sebastianl1/antigravity-termux.git
+cd antigravity-termux
 bash install.sh
 ```
 
@@ -138,6 +208,16 @@ despues:
 ```bash
 opencode run "Escribe un script en Python" --model google/antigravity-gemini-3-pro
 ```
+
+---
+
+## Etiquetas y palabras clave
+
+Proyecto orientado a: **Termux**, **Android**, **Antigravity CLI**, **agy**,
+**inteligencia artificial**, **asistente de IA en terminal**, **aarch64**,
+**ARM64**, **glibc**, **opencode**, **Gemini**, **instalación sin proot**.
+Búsquedas frecuentes: "antigravity termux", "instalar antigravity en android",
+"agy termux", "antigravity cli android".
 
 ---
 

@@ -2,7 +2,7 @@
 #
 # Antigravity CLI - Termux
 # Script de instalacion para Termux
-# v1.0.0
+# v1.2.0
 #
 # Script creado por Sebastian Laguna
 # https://github.com/tuusuario/antigravity-termux
@@ -25,7 +25,7 @@ set -eEuo pipefail
 
 SCRIPT_VERSION="1.2.0"
 SCRIPT_AUTHOR="Sebastian Laguna"
-SCRIPT_REPO="https://github.com/sebastianl1/antigravity_termux"
+SCRIPT_REPO="https://github.com/sebastianl1/antigravity-termux"
 
 AGY_REPO="wallentx/antigravity-cli-termux"
 AGY_URL="https://github.com/${AGY_REPO}/releases/latest/download/antigravity-termux-standalone.tar.gz"
@@ -375,6 +375,17 @@ install_agy() {
         print_error "Los archivos extraidos no contienen los binarios esperados."
     fi
 
+    # Verificar integridad de los binarios (detecta descargas corruptas)
+    if [ "$(head -c 4 "$EXTRACT_DIR/agy" 2>/dev/null | od -An -tx1 | tr -d ' \n')" != "7f454c46" ]; then
+        print_error "El bootstrapper 'agy' no es un binario ELF valido. Descarga corrupta."
+    fi
+
+    local va39_size
+    va39_size=$(wc -c < "$EXTRACT_DIR/agy.va39" 2>/dev/null || echo 0)
+    if [ "$va39_size" -lt 100000000 ]; then
+        print_error "El motor 'agy.va39' tiene un tamano inesperado (${va39_size} bytes). Descarga incompleta."
+    fi
+
     run_hidden "Instalar bootstrapper" install -m 0755 "$EXTRACT_DIR/agy" "$AGY_BIN_DIR/agy"
     run_hidden "Instalar motor agy.va39" install -m 0755 "$EXTRACT_DIR/agy.va39" "$AGY_BIN_DIR/agy.va39"
 }
@@ -404,15 +415,6 @@ setup_opencode_flow() {
 
     mkdir -p "$OPCODE_CONFIG_DIR"
 
-    local opencode_config='{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["opencode-antigravity-auth@latest"],
-  "provider": {
-    "google": {}
-  },
-  "model": "google/antigravity-gemini-3-pro"
-}'
-
     if [ -f "$OPCODE_CONFIG_FILE" ]; then
         if grep -q "opencode-antigravity-auth" "$OPCODE_CONFIG_FILE" 2>/dev/null; then
             check_item "Plugin antigravity-auth" "ok" "ya configurado"
@@ -423,7 +425,31 @@ setup_opencode_flow() {
         check_item "Respaldo opencode" "ok" "${bk}"
     fi
 
-    echo "$opencode_config" > "$OPCODE_CONFIG_FILE"
+    if command -v node &>/dev/null; then
+        # Merge respetando la configuracion existente del usuario
+        node - "$OPCODE_CONFIG_FILE" <<'NODE'
+const fs = require('fs');
+const file = process.argv[2];
+let cfg = {};
+if (fs.existsSync(file)) {
+    try { cfg = JSON.parse(fs.readFileSync(file, 'utf8')); }
+    catch (e) { cfg = {}; }
+}
+cfg.$schema = cfg.$schema || 'https://opencode.ai/config.json';
+cfg.plugin = cfg.plugin || [];
+if (!cfg.plugin.includes('opencode-antigravity-auth@latest')) {
+    cfg.plugin.push('opencode-antigravity-auth@latest');
+}
+cfg.provider = cfg.provider || {};
+cfg.provider.google = cfg.provider.google || {};
+if (!cfg.model) cfg.model = 'google/antigravity-gemini-3-pro';
+fs.writeFileSync(file, JSON.stringify(cfg, null, 2) + '\n');
+NODE
+    else
+        # Fallback si node no esta disponible
+        printf '{\n  "$schema": "https://opencode.ai/config.json",\n  "plugin": ["opencode-antigravity-auth@latest"],\n  "provider": { "google": {} },\n  "model": "google/antigravity-gemini-3-pro"\n}\n' > "$OPCODE_CONFIG_FILE"
+    fi
+
     check_item "Configurar plugin" "ok" "${OPCODE_CONFIG_FILE}"
 
     # Verificar que el plugin esta instalado en opencode
