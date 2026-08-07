@@ -221,6 +221,36 @@ Búsquedas frecuentes: "antigravity termux", "instalar antigravity en android",
 
 ---
 
+## Dependencias y resiliencia
+
+El instalador depende de recursos externos de terceros. Para que la herramienta
+siga funcionando si alguno desaparece, hay **4 capas de protección**:
+
+| Capa | Qué hace |
+|------|----------|
+| **Fuente primaria** | Descarga los binarios de `wallentx/antigravity-cli-termux` (versión pinneada, no `latest`) |
+| **Mirror propio** | Si wallentx falla, descarga el mismo tarball desde un release de **este repositorio** (`agy-<version>`) |
+| **Caché local** | Si las dos anteriores fallan, instala desde `~/.cache/agy/` (se guarda tras la primera instalación) |
+| **Verificación SHA256** | Cada tarball se valida contra `versions.json` antes de instalar |
+
+### Qué pasa si wallentx desaparece
+
+- Quienes ya instalaron agy alguna vez: ejecuta `bash install.sh --offline`
+  para reinstalar/reparar usando solo la caché local.
+- En cualquier caso, el instalador intenta **automáticamente** wallentx → mirror → caché.
+
+### Sincronizar el mirror (cuando salga versión nueva de wallentx)
+
+```bash
+bash scripts/mirror.sh          # última versión
+bash scripts/mirror.sh v1.2.0   # versión concreta
+```
+
+Esto descarga, verifica, sube el tarball al release del propio repo y actualiza
+`versions.json`. Requiere `gh` autenticado.
+
+---
+
 ## Desinstalacion
 
 Para desinstalar agy:
@@ -250,6 +280,9 @@ rm -rf ~/backups/agy.backup.*
 antigravity-termux/
 ├── imagenes/
 │   └── Antigravity.jpg   # Banner del proyecto
+├── scripts/
+│   └── mirror.sh         # Sincroniza el mirror de binarios (copia de seguridad)
+├── versions.json         # Manifest de versiones + SHA256
 ├── install.sh            # Script de instalacion
 ├── README.md             # Este archivo
 └── LICENSE               # Licencia MIT

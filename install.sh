@@ -28,16 +28,30 @@ SCRIPT_AUTHOR="Sebastian Laguna"
 SCRIPT_REPO="https://github.com/sebastianl1/antigravity-termux"
 
 AGY_REPO="wallentx/antigravity-cli-termux"
-AGY_URL="https://github.com/${AGY_REPO}/releases/latest/download/antigravity-termux-standalone.tar.gz"
+MIRROR_REPO="sebastianl1/antigravity-termux"
+ASSET="antigravity-termux-standalone.tar.gz"
 AGY_BIN_DIR="$PREFIX/bin"
 BACKUP_DIR="$HOME/backups"
 OPCODE_CONFIG_DIR="$HOME/.config/opencode"
 OPCODE_CONFIG_FILE="$OPCODE_CONFIG_DIR/opencode.json"
 TMP_DIR="$PREFIX/tmp/agy-install"
 EXTRACT_DIR="$TMP_DIR/extract"
-TARBALL="$TMP_DIR/antigravity-termux-standalone.tar.gz"
+TARBALL="$TMP_DIR/${ASSET}"
 LOG_FILE="$TMP_DIR/install.log"
 INSTALL_FAILED=false
+OFFLINE=false
+
+# Caché local para reinstalaciones sin red
+AGY_CACHE_DIR="$HOME/.cache/agy"
+AGY_CACHE_TARBALL="$AGY_CACHE_DIR/${ASSET}"
+
+# Manifest de versiones (junto al script en el repo clonado)
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+VERSIONS_FILE="$SCRIPT_DIR/versions.json"
+
+# Valores por defecto (última versión conocida)
+AGY_VERSION="v1.1.10"
+AGY_SHA256="89bb5d5818b3e42999f88498e49e4c6f0df5f064c3f33c973ced2a491f6a6f55"
 
 # ── Colores (profesionales, sin llamativos) ─────────────────────────────────
 
@@ -185,6 +199,28 @@ detect_installed_version() {
     if command -v agy &>/dev/null; then
         agy --version 2>/dev/null || echo ""
     fi
+}
+
+# Carga version y SHA256 desde versions.json (si existe junto al script)
+load_versions() {
+    if [ -f "$VERSIONS_FILE" ]; then
+        local v
+        v=$(grep -o '"version": *"[^"]*"' "$VERSIONS_FILE" | head -1 | cut -d'"' -f4)
+        [ -n "$v" ] && AGY_VERSION="$v"
+        v=$(grep -o '"sha256": *"[^"]*"' "$VERSIONS_FILE" | head -1 | cut -d'"' -f4)
+        [ -n "$v" ] && AGY_SHA256="$v"
+    fi
+}
+
+# Descarga silenciosa de una fuente concreta (no aborta el script)
+try_download() {
+    local src="$1" out="$2"
+    if [[ "$src" == cache:* ]]; then
+        cp "${src#cache:}" "$out" 2>/dev/null
+        return $?
+    fi
+    curl -fsSL --proto =https --max-time 600 "$src" -o "$out" 2>/dev/null
+    return $?
 }
 
 # ── Banner principal ────────────────────────────────────────────────────────
@@ -365,9 +401,51 @@ install_agy() {
     rm -rf "$EXTRACT_DIR"
     mkdir -p "$EXTRACT_DIR"
 
-    run_hidden "Descargar binarios" curl -fsSL --proto =https "$AGY_URL" -o "$TARBALL"
+    # Descargar binarios con fallback: wallentx -> mirror propio -> caché local
+    local srcs=(
+      "https://github.com/${AGY_REPO}/releases/download/${AGY_VERSION}/${ASSET}"
+      "https://github.com/${MIRROR_REPO}/releases/download/agy-${AGY_VERSION}/${ASSET}"
+    )
+    if [ -f "$AGY_CACHE_TARBALL" ]; then
+        srcs+=("cache:$AGY_CACHE_TARBALL")
+    fi
+
+    local src ok=0
+    for src in "${srcs[@]}"; do
+        if [ "$OFFLINE" = "true" ] && [[ "$src" != cache:* ]]; then
+            continue
+        fi
+        local label
+        case "$src" in
+            https://github.com/wallentx/*) label="wallentx (${AGY_VERSION})" ;;
+            https://github.com/${MIRROR_REPO}/*) label="mirror propio (${AGY_VERSION})" ;;
+            cache:*) label="caché local" ;;
+            *) label="$src" ;;
+        esac
+        printf "  ⬡ ${BOLD}%-34s${RESET} ${DIM}intentando %s${RESET}\n" "Descargar binarios" "$label"
+        if try_download "$src" "$TARBALL"; then
+            printf "  ${GREEN}✔${RESET} ${BOLD}%-34s${RESET} ${GREEN}descargado (${label})${RESET}\n" "Descargar binarios"
+            ok=1
+            break
+        fi
+        printf "  ${DIM}−${RESET} ${BOLD}%-34s${RESET} ${DIM}fallo: ${label}${RESET}\n" "Descargar binarios"
+    done
+
+    if [ "$ok" != "1" ]; then
+        print_error "No se pudo descargar agy desde ninguna fuente (wallentx, mirror ni caché).\n  Revisa tu conexión. Si ya instalaste antes, usa: bash install.sh --offline"
+    fi
 
     run_hidden "Verificar integridad" gzip -t "$TARBALL"
+
+    # Verificar SHA256 contra versions.json
+    if [ -n "$AGY_SHA256" ] && command -v sha256sum &>/dev/null; then
+        local actual
+        actual=$(sha256sum "$TARBALL" | awk '{print $1}')
+        if [ "$actual" != "$AGY_SHA256" ]; then
+            print_error "El checksum SHA256 no coincide.\n  Esperado: ${AGY_SHA256}\n  Obtenido:  ${actual}\n  La descarga es corrupta o la versión cambió. Revisa versions.json."
+        fi
+        check_item "Verificar SHA256" "ok" "${actual:0:12}…"
+    fi
 
     run_hidden "Extraer archivos" tar -xz -C "$EXTRACT_DIR" -f "$TARBALL" agy agy.va39
 
@@ -385,6 +463,12 @@ install_agy() {
     if [ "$va39_size" -lt 100000000 ]; then
         print_error "El motor 'agy.va39' tiene un tamano inesperado (${va39_size} bytes). Descarga incompleta."
     fi
+
+    # Guardar en caché local para reinstalaciones sin red
+    mkdir -p "$AGY_CACHE_DIR"
+    cp "$TARBALL" "$AGY_CACHE_TARBALL"
+    printf '{"version":"%s","sha256":"%s"}\n' "$AGY_VERSION" "$AGY_SHA256" > "$AGY_CACHE_DIR/version.json"
+    check_item "Caché local" "ok" "$AGY_CACHE_DIR"
 
     run_hidden "Instalar bootstrapper" install -m 0755 "$EXTRACT_DIR/agy" "$AGY_BIN_DIR/agy"
     run_hidden "Instalar motor agy.va39" install -m 0755 "$EXTRACT_DIR/agy.va39" "$AGY_BIN_DIR/agy.va39"
@@ -437,8 +521,8 @@ if (fs.existsSync(file)) {
 }
 cfg.$schema = cfg.$schema || 'https://opencode.ai/config.json';
 cfg.plugin = cfg.plugin || [];
-if (!cfg.plugin.includes('opencode-antigravity-auth@latest')) {
-    cfg.plugin.push('opencode-antigravity-auth@latest');
+if (!cfg.plugin.includes('opencode-antigravity-auth@1.6.0')) {
+    cfg.plugin.push('opencode-antigravity-auth@1.6.0');
 }
 cfg.provider = cfg.provider || {};
 cfg.provider.google = cfg.provider.google || {};
@@ -447,7 +531,7 @@ fs.writeFileSync(file, JSON.stringify(cfg, null, 2) + '\n');
 NODE
     else
         # Fallback si node no esta disponible
-        printf '{\n  "$schema": "https://opencode.ai/config.json",\n  "plugin": ["opencode-antigravity-auth@latest"],\n  "provider": { "google": {} },\n  "model": "google/antigravity-gemini-3-pro"\n}\n' > "$OPCODE_CONFIG_FILE"
+        printf '{\n  "$schema": "https://opencode.ai/config.json",\n  "plugin": ["opencode-antigravity-auth@1.6.0"],\n  "provider": { "google": {} },\n  "model": "google/antigravity-gemini-3-pro"\n}\n' > "$OPCODE_CONFIG_FILE"
     fi
 
     check_item "Configurar plugin" "ok" "${OPCODE_CONFIG_FILE}"
@@ -456,7 +540,7 @@ NODE
     if ! find "$HOME" -maxdepth 4 -type d -path "*/opencode-antigravity-auth" -print -quit &>/dev/null 2>&1; then
         echo ""
         echo -e "  ${DIM}Instalando plugin en opencode...${RESET}"
-        opencode plugin opencode-antigravity-auth@latest &>/dev/null || true
+        opencode plugin opencode-antigravity-auth@1.6.0 &>/dev/null || true
     fi
 }
 
@@ -591,6 +675,7 @@ show_help() {
     printf "  ${BOLD}%-28s${RESET} ${DIM}%s${RESET}\n" "bash install.sh --help" "Muestra esta ayuda"
     printf "  ${BOLD}%-28s${RESET} ${DIM}%s${RESET}\n" "bash install.sh --version" "Muestra la version"
     printf "  ${BOLD}%-28s${RESET} ${DIM}%s${RESET}\n" "bash install.sh --uninstall" "Desinstala agy"
+    printf "  ${BOLD}%-28s${RESET} ${DIM}%s${RESET}\n" "bash install.sh --offline" "Instala usando solo la cache local"
     echo ""
     echo -e "  ${BOLD}Descripcion:${RESET}"
     echo -e "  ${DIM}Instala Antigravity CLI (agy) de forma nativa en Termux."
@@ -619,6 +704,9 @@ main() {
         --uninstall)
             do_uninstall
             ;;
+        --offline|-o)
+            OFFLINE=true
+            ;;
         "")
             ;;
         *)
@@ -628,7 +716,12 @@ main() {
             ;;
     esac
 
+    load_versions
     print_banner
+
+    if [ "$OFFLINE" = "true" ] && [ ! -f "$AGY_CACHE_TARBALL" ]; then
+        print_error "Modo --offline requiere una instalacion previa (caché local vacía).\n  Primero ejecuta: bash install.sh"
+    fi
 
     if ! ask_yes_no "¿Deseas continuar con la instalacion?" "S"; then
         echo -e "  ${DIM}Instalacion cancelada.${RESET}"

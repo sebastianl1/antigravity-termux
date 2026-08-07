@@ -1,0 +1,8 @@
+{
+  "version": "v1.1.10",
+  "sha256": "89bb5d5818b3e42999f88498e49e4c6f0df5f064c3f33c973ced2a491f6a6f55",
+  "urls": [
+    "https://github.com/wallentx/antigravity-cli-termux/releases/download/v1.1.10/antigravity-termux-standalone.tar.gz",
+    "https://github.com/sebastianl1/antigravity-termux/releases/download/agy-v1.1.10/antigravity-termux-standalone.tar.gz"
+  ]
+}

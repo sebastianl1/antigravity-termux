@@ -109,6 +109,11 @@
         "@type": "Question",
         "name": "¿Puedo usar los modelos de Antigravity desde opencode?",
         "acceptedAnswer": { "@type": "Answer", "text": "Sí. El instalador configura automáticamente el plugin opencode-antigravity-auth. Luego usa 'opencode run \"consulta\" --model google/antigravity-gemini-3-pro' para usar los modelos directamente." }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué pasa si el repositorio de wallentx desaparece?",
+        "acceptedAnswer": { "@type": "Answer", "text": "El instalador tiene un mirror de los binarios en este mismo repositorio y una caché local en ~/.cache/agy. Si wallentx cae, la descarga cae automáticamente al mirror y, si no, a la caché (o usa 'bash install.sh --offline')." }
       }
     ]
   }
@@ -585,6 +590,7 @@
           <div class="faq-item reveal"><button class="faq-q">¿Cómo actualizo Antigravity CLI?<span class="chev">▼</span></button><div class="faq-a"><p>Ejecuta <code>agy update</code> para actualizar a la última versión, o vuelve a ejecutar <code>bash install.sh</code> en el repositorio clonado para reinstalar la versión más reciente.</p></div></div>
           <div class="faq-item reveal"><button class="faq-q">¿Cómo desinstalo agy?<span class="chev">▼</span></button><div class="faq-a"><p>Ejecuta <code>bash install.sh --uninstall</code> en el repositorio clonado. Esto elimina los binarios de <code>$PREFIX/bin</code>. También puedes eliminar la configuración de opencode y los respaldos manualmente.</p></div></div>
           <div class="faq-item reveal"><button class="faq-q">¿Puedo usar los modelos de Antigravity desde opencode?<span class="chev">▼</span></button><div class="faq-a"><p>Sí. El instalador configura automáticamente el plugin <code>opencode-antigravity-auth</code>. Luego usa <code>opencode run "consulta" --model google/antigravity-gemini-3-pro</code> para usar los modelos directamente.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-q">¿Qué pasa si el repositorio de wallentx desaparece?<span class="chev">▼</span></button><div class="faq-a"><p>El instalador tiene un <strong>mirror</strong> de los binarios en este mismo repositorio y una <strong>caché local</strong> en <code>~/.cache/agy</code>. Si wallentx cae, la descarga cae automáticamente al mirror y, si tampoco, a la caché (o usa <code>bash install.sh --offline</code>). El mirror se sincroniza con <code>bash scripts/mirror.sh</code>.</p></div></div>
         </div>
       </div>
     </section>
