@@ -242,8 +242,8 @@ siga funcionando si alguno desaparece, hay **4 capas de protección**:
 ### Sincronizar el mirror (cuando salga versión nueva de wallentx)
 
 ```bash
-bash scripts/mirror.sh          # última versión
-bash scripts/mirror.sh v1.2.0   # versión concreta
+bash scripts/mirror.sh          # última versión de wallentx
+bash scripts/mirror.sh v1.1.10  # versión concreta
 ```
 
 Esto descarga, verifica, sube el tarball al release del propio repo y actualiza
@@ -280,6 +280,10 @@ rm -rf ~/backups/agy.backup.*
 antigravity-termux/
 ├── imagenes/
 │   └── Antigravity.jpg   # Banner del proyecto
+├── docs/                 # Landing page (GitHub Pages) con i18n
+│   ├── index.html        # Landing multilingüe (ES, EN, PT, FR, DE, ZH)
+│   ├── lang/             # Diccionarios por idioma
+│   └── robots.txt, sitemap.xml
 ├── scripts/
 │   └── mirror.sh         # Sincroniza el mirror de binarios (copia de seguridad)
 ├── versions.json         # Manifest de versiones + SHA256

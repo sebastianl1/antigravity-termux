@@ -1,0 +1,56 @@
+# Antigravity CLI para Termux
+
+> Instalacion nativa de Antigravity CLI (agy) en Termux para Android ARM64 (aarch64). Sin proot, sin maquinas virtuales, sin Cloud Shell. Usa el fork comunitario wallentx/antigravity-cli-termux (bootstrapper Android/Bionic + engine glibc parcheado).
+
+## Instalacion
+
+- [README (instalacion por plataforma)](https://github.com/sebastianl1/antigravity-termux#readme)
+- [Landing page](https://sebastianl1.github.io/antigravity-termux/): instrucciones y FAQ en 6 idiomas
+
+Instalacion rapida en Termux:
+
+```
+pkg install git curl tar -y
+git clone https://github.com/sebastianl1/antigravity-termux.git
+cd antigravity-termux
+bash install.sh
+```
+
+## Uso
+
+- `agy` — inicia la CLI interactiva
+- `agy login` — autentica con Google (OAuth)
+- `agy --version` — muestra la version
+- `bash install.sh --uninstall` — desinstala
+
+## Componentes que instala
+
+- `$PREFIX/bin/agy` — bootstrapper nativo Android (~30KB, Bionic libc)
+- `$PREFIX/bin/agy.va39` — engine glibc parcheado para Termux (~160MB)
+
+## Integracion con opencode
+
+El instalador puede configurar el plugin `opencode-antigravity-auth` para usar
+los modelos de Antigravity desde opencode:
+
+```
+opencode auth login   # seleccionar Google -> OAuth with Google (Antigravity)
+opencode run "consulta" --model google/antigravity-gemini-3-pro
+```
+
+Modelos: `google/antigravity-gemini-3-pro`, `google/antigravity-gemini-3.1-pro`,
+`google/antigravity-gemini-3-flash`, `google/antigravity-claude-sonnet-4-6`,
+`google/antigravity-claude-opus-4-6-thinking`.
+
+## Resiliencia
+
+4 capas de proteccion: fuente primaria (wallentx, version pineada) → mirror
+propio (release de este repo) → cache local (`~/.cache/agy`) → verificacion
+SHA256 contra `versions.json`. Reinstalar sin red: `bash install.sh --offline`.
+
+## Enlaces
+
+- Repositorio: https://github.com/sebastianl1/antigravity-termux
+- Landing: https://sebastianl1.github.io/antigravity-termux/
+- Fork comunitario: https://github.com/wallentx/antigravity-cli-termux
+- Licencia: MIT

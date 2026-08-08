@@ -5,7 +5,7 @@
 # v1.2.0
 #
 # Script creado por Sebastian Laguna
-# https://github.com/tuusuario/antigravity-termux
+# https://github.com/sebastianl1/antigravity-termux
 #
 # Descripcion:
 #   Instala Antigravity CLI (agy) de forma nativa en Termux
