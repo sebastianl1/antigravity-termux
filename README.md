@@ -300,6 +300,15 @@ antigravity-termux/
 
 ---
 
+## Comunidad
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — Guia para contribuir
+- [SECURITY.md](SECURITY.md) — Politica de seguridad
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — Codigo de conducta
+- [CHANGELOG.md](CHANGELOG.md) — Historial de versiones
+
+---
+
 ## Creditos
 
 - **[wallentx/antigravity-cli-termux](https://github.com/wallentx/antigravity-cli-termux)**
